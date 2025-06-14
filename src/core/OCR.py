@@ -15,6 +15,7 @@ def extract_text_from_image_tesseract(image: Union[Image.Image, str], lang: str 
     Extract text from an image using OCR.
 
     :param image: Either an Image object or a path to an image file.
+    :param lang: Language for OCR, default is "eng" (English).
     :return: Extracted text as a string.
     """
     try:
