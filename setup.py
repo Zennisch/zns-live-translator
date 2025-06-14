@@ -6,6 +6,7 @@ setup(
         "pytest",
         "mss",
         "pillow",
+        "pytesseract",
         "pytest-asyncio",
     ]
 )

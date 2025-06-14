@@ -9,6 +9,7 @@ def capture_screen(region=Tuple[int, int, int, int], fp=None) -> Optional[Image.
     Capture a screenshot of the specified region of the screen.
 
     :param region: A tuple (left, top, width, height) defining the region to capture.
+    :param fp: Optional file path to save the screenshot. If provided, the image will be saved in PNG format.
     :return: An Image object containing the screenshot.
     """
     x, y, width, height = region
