@@ -11,14 +11,13 @@ async def translate(text: str, source_lang: str = "auto", target_lang: str = "en
     :param target_lang: The language to translate the text into (default is 'en').
     :return: The translated text.
     """
-    translator = Translator(service_urls=["translate.googleapis.com"])
+    async with Translator(service_urls=["translate.googleapis.com"]) as translator:
+        if not text.strip():  # Check if the text is empty or contains only whitespace
+            return ""
 
-    if not text.strip():  # Check if the text is empty or contains only whitespace
-        return ""
-
-    try:
-        result: Translated = await translator.translate(text, src=source_lang, dest=target_lang)
-        return result.text
-    except Exception as e:
-        print(f"Translator[translate]: Error translating text: {e}")
-        return text
+        try:
+            result: Translated = await translator.translate(text, src=source_lang, dest=target_lang)
+            return result.text
+        except Exception as e:
+            print(f"Translator[translate]: Error translating text: {e}")
+            return text
