@@ -5,12 +5,12 @@ from PIL import Image
 
 
 @overload
-def extract_text_from_image(image: Image.Image, lang: str = "eng") -> str: ...
+def extract_text_from_image_tesseract(image: Image.Image, lang: str = "eng") -> str: ...
 
 @overload
-def extract_text_from_image(image_path: str, lang: str = "eng") -> str: ...
+def extract_text_from_image_tesseract(image_path: str, lang: str = "eng") -> str: ...
 
-def extract_text_from_image(image: Union[Image.Image, str], lang: str = "eng") -> str:
+def extract_text_from_image_tesseract(image: Union[Image.Image, str], lang: str = "eng") -> str:
     """
     Extract text from an image using OCR.
 

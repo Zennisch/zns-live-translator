@@ -16,7 +16,7 @@ async def test_translate_image():
     assert image.size == (width, height), "Captured image size does not match expected dimensions"
     assert os.path.exists(fp), "Captured image file does not exist"
 
-    text = OCR.extract_text_from_image(image, lang="eng")
+    text = OCR.extract_text_from_image_tesseract(image, lang="eng")
     assert text != "", "OCR extraction failed, text is empty"
 
     translated_text = await Translator.translate(text, source_lang="auto", target_lang="ja")
