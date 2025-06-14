@@ -7,6 +7,8 @@ setup(
         "mss",
         "pillow",
         "pytesseract",
+        "PyQt5",
+        "PyQt5-stubs",
         "pytest-asyncio",
     ]
 )
