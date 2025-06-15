@@ -1,9 +1,5 @@
-import time
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from Config import LOCATION
-from core import ScreenCapture, OCR
 from thread.TranslateThread import TranslateThread
 
 
@@ -60,24 +56,27 @@ class CaptureWindow(QtWidgets.QWidget):
     def on_capture_shortcut(self):
         def finish(translated_text: str):
             print(f"Translated text: {translated_text}")
+            self.show()
 
         self.hide()
 
-        x, y, w, h = self.x(), self.y(), self.width(), self.height()
-        cid = int(time.time())
-        fp = f"{LOCATION}/asset/test/capture-{cid}.png"
+        region = self.x(), self.y(), self.width(), self.height()
+        ocr_method = "tesseract"
+        ocr_lang = "eng"
+        src_lang = "auto"
+        dest_lang = "vi"
+        is_save_image = True
 
-        image = ScreenCapture.capture_screen((x, y, w, h), fp)
-        if image is None:
-            raise ValueError("Screen capture failed, image is None")
-
-        text = OCR.extract_text_from_image_tesseract(image, lang="eng")
-
-        self._translate_thread = TranslateThread(text=text, source_lang="auto", target_lang="vi")
+        self._translate_thread = TranslateThread(
+            region=region,
+            ocr_method=ocr_method,
+            ocr_lang=ocr_lang,
+            src_lang=src_lang,
+            dest_lang=dest_lang,
+            is_save_image=is_save_image
+        )
         self._translate_thread.signal_finish.connect(finish)
         self._translate_thread.start()
-
-        self.show()
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:

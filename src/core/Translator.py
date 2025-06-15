@@ -2,13 +2,13 @@ from googletrans import Translator
 from googletrans.models import Translated
 
 
-async def translate(text: str, source_lang: str = "auto", target_lang: str = "en") -> str:
+async def translate_google(text: str, src_lang: str = "auto", dest_lang: str = "en") -> str:
     """
-    Translates the given text from source language to target language.
+    Translates the given text from source language to destination language using Google Translate.
 
     :param text: The text to translate.
-    :param source_lang: The language of the input text (default is 'auto').
-    :param target_lang: The language to translate the text into (default is 'en').
+    :param src_lang: The language of the input text (default is 'auto').
+    :param dest_lang: The language to translate the text into (default is 'en').
     :return: The translated text.
     """
     async with Translator(service_urls=["translate.googleapis.com"]) as translator:
@@ -16,8 +16,7 @@ async def translate(text: str, source_lang: str = "auto", target_lang: str = "en
             return ""
 
         try:
-            result: Translated = await translator.translate(text, src=source_lang, dest=target_lang)
+            result: Translated = await translator.translate(text, src=src_lang, dest=dest_lang)
             return result.text
         except Exception as e:
-            print(f"Translator[translate]: Error translating text: {e}")
-            return text
+            raise RuntimeError(f"Translator[translate_google]: Translation failed with error: {e}") from e
