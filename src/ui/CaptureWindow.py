@@ -22,15 +22,17 @@ class CaptureWindow(QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.resize(400, 300)
 
-        lyt = QtWidgets.QVBoxLayout(self)
-        lyt.setContentsMargins(10, 10, 10, 10)
-        lbl = QtWidgets.QLabel()
-        lbl.setText(
+        main_lyt = QtWidgets.QHBoxLayout(self)
+        main_lyt.setContentsMargins(10, 10, 10, 10)
+
+        content_lyt = QtWidgets.QVBoxLayout()
+        content_lbl = QtWidgets.QLabel()
+        content_lbl.setText(
             "Kéo di chuyển hoặc resize cửa sổ này.\n"
             "Nhấn Ctrl+Shift+S để test."
         )
-        lbl.setAlignment(QtCore.Qt.AlignCenter)
-        lbl.setStyleSheet(
+        content_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        content_lbl.setStyleSheet(
             """
             QLabel {
                 background-color: rgba(0, 0, 0, 100);
@@ -40,13 +42,14 @@ class CaptureWindow(QtWidgets.QWidget):
             }
             """
         )
-        lyt.addWidget(lbl)
+        content_lyt.addWidget(content_lbl)
+        main_lyt.addLayout(content_lyt, 1)
 
-        lyt_size = QtWidgets.QHBoxLayout()
-        lyt_size.addStretch()
+        grip_lyt = QtWidgets.QVBoxLayout()
+        grip_lyt.addStretch()
         grip = QtWidgets.QSizeGrip(self)
-        lyt_size.addWidget(grip)
-        lyt.addLayout(lyt_size)
+        grip_lyt.addWidget(grip)
+        main_lyt.addLayout(grip_lyt, 0)
 
     def init_shortcut(self):
         default_capture_sequence = QtGui.QKeySequence("Ctrl+Shift+S")
