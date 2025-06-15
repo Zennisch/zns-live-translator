@@ -1,9 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QVBoxLayout
 
 from thread.TranslateThread import TranslateThread
 
 
 class CaptureWindow(QtWidgets.QWidget):
+    content_lyt: QVBoxLayout
+
     def __init__(self):
         super().__init__()
 
@@ -25,7 +28,7 @@ class CaptureWindow(QtWidgets.QWidget):
         main_lyt = QtWidgets.QHBoxLayout(self)
         main_lyt.setContentsMargins(10, 10, 10, 10)
 
-        content_lyt = QtWidgets.QVBoxLayout()
+        self.content_lyt = QtWidgets.QVBoxLayout()
         content_lbl = QtWidgets.QLabel()
         content_lbl.setText(
             "Kéo di chuyển hoặc resize cửa sổ này.\n"
@@ -42,8 +45,8 @@ class CaptureWindow(QtWidgets.QWidget):
             }
             """
         )
-        content_lyt.addWidget(content_lbl)
-        main_lyt.addLayout(content_lyt, 1)
+        self.content_lyt.addWidget(content_lbl)
+        main_lyt.addLayout(self.content_lyt, 1)
 
         grip_lyt = QtWidgets.QVBoxLayout()
         grip_lyt.addStretch()
@@ -63,7 +66,14 @@ class CaptureWindow(QtWidgets.QWidget):
 
         self.hide()
 
-        region = self.x(), self.y(), self.width(), self.height()
+        geometry = self.content_lyt.geometry()
+        position = self.mapToGlobal(QtCore.QPoint(geometry.x(), geometry.y()))
+        region = (
+            position.x(),
+            position.y(),
+            geometry.width(),
+            geometry.height()
+        )
         ocr_method = "tesseract"
         ocr_lang = "eng"
         src_lang = "auto"
