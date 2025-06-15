@@ -1,4 +1,5 @@
 import os.path
+import time
 
 from Config import LOCATION
 from core import OCR
@@ -9,11 +10,13 @@ from test.Mark import MARK
 
 @MARK.asyncio
 async def test_translate_image():
-    x, y, width, height = 500, 100, 1200, 600
-    fp = f"{LOCATION}/asset/test/test_translate_image.png"
-    image = ScreenCapture.capture_screen((x, y, width, height), fp)
+    x, y, w, h = 500, 100, 1200, 600
+    cid = int(time.time())
+    fp = f"{LOCATION}/asset/test/test_translate_image-{cid}.png"
+
+    image = ScreenCapture.capture_screen((x, y, w, h), fp)
     assert image is not None, "Screen capture failed, image is None"
-    assert image.size == (width, height), "Captured image size does not match expected dimensions"
+    assert image.size == (w, h), "Captured image size does not match expected dimensions"
     assert os.path.exists(fp), "Captured image file does not exist"
 
     text = OCR.extract_text_from_image_tesseract(image, lang="eng")
@@ -21,4 +24,7 @@ async def test_translate_image():
 
     translated_text = await Translator.translate(text, source_lang="auto", target_lang="ja")
     assert translated_text != "", "Translation failed, translated text is empty"
-    print(translated_text)
+
+    with open(f"{LOCATION}/asset/test/test_translate_image-{cid}.txt", "w", encoding="utf-8") as f:
+        f.write(translated_text)
+    assert os.path.exists(f"{LOCATION}/asset/test/test_translate_image-{cid}.txt"), "Translation output file does not exist"

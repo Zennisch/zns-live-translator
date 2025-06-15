@@ -1,8 +1,8 @@
 import os.path
 
 from Config import LOCATION
-from test.Mark import MARK
 from core import ScreenCapture
+from test.Mark import MARK
 
 
 @MARK.test

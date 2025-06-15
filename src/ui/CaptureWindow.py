@@ -1,10 +1,18 @@
+import time
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+from Config import LOCATION
+from core import ScreenCapture, OCR
+from thread.TranslateThread import TranslateThread
+
 
 class CaptureWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
         self._mouse_position = None
+        self._translate_thread = None
 
         self.init_ui()
         self.init_shortcut()
@@ -45,15 +53,31 @@ class CaptureWindow(QtWidgets.QWidget):
         lyt.addLayout(lyt_size)
 
     def init_shortcut(self):
-        def on_capture_shortcut():
-            print("Shortcut Ctrl+Shift+S detected!")
-            print(f"x: {self.x()}, y: {self.y()}")
-            print(f"w: {self.width()}, h: {self.height()}")
-            print()
+        default_capture_sequence = QtGui.QKeySequence("Ctrl+Shift+S")
+        capture_shortcut = QtWidgets.QShortcut(default_capture_sequence, self)
+        capture_shortcut.activated.connect(self.on_capture_shortcut)
 
-        default_sequence = QtGui.QKeySequence("Ctrl+Shift+S")
-        shortcut = QtWidgets.QShortcut(default_sequence, self)
-        shortcut.activated.connect(on_capture_shortcut)
+    def on_capture_shortcut(self):
+        def finish(translated_text: str):
+            print(f"Translated text: {translated_text}")
+
+        self.hide()
+
+        x, y, w, h = self.x(), self.y(), self.width(), self.height()
+        cid = int(time.time())
+        fp = f"{LOCATION}/asset/test/capture-{cid}.png"
+
+        image = ScreenCapture.capture_screen((x, y, w, h), fp)
+        if image is None:
+            raise ValueError("Screen capture failed, image is None")
+
+        text = OCR.extract_text_from_image_tesseract(image, lang="eng")
+
+        self._translate_thread = TranslateThread(text=text, source_lang="auto", target_lang="vi")
+        self._translate_thread.signal_finish.connect(finish)
+        self._translate_thread.start()
+
+        self.show()
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
